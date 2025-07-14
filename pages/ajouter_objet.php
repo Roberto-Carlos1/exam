@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 require('../inc/functions.php');
 
@@ -25,6 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $categories = getCategories();
 myheader();
 ?>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="objets.php" class="btn btn-primary btn-sm">Retour aux objets</a>
+        <a href="stat_objet_retourner.php" class="btn btn-primary btn-sm">VOIr stat total objet retourner</a>
+    </div>
+</div>
 
 <div class="container">
     <h2>Ajouter un objet</h2>

@@ -2,136 +2,136 @@
 session_start();
 require('../inc/functions.php');
 
+redirectIfNotLoggedIn();
+
 $message = '';
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['emprunter'])) {
-    $id_objet = intval($_POST['id_objet']);
-    $id_membre = $_SESSION['id_membre'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['retourner'])) {
+    $id_emprunt = intval($_POST['id_emprunt']);
+    $etat_retour = isset($_POST['etat_retour']) ? $_POST['etat_retour'] : null;
 
-    if (emprunterObjet($id_objet, $id_membre)) {
-        $message = "Objet emprunté avec succès !";
+    if ($etat_retour && retournerObjet($id_emprunt, $_SESSION['id_membre'], $etat_retour)) {
+        $message = "Objet retourné avec succès !";
     } else {
-        $error = "Erreur lors de l'emprunt. L'objet n'est peut-être plus disponible.";
+        $error = "Erreur lors du retour de l'objet.";
     }
 }
 
-$categories = getCategories();
-$categorie = isset($_GET['cat']) ? intval($_GET['cat']) : null;
-$nom = isset($_GET['nom']) ? trim($_GET['nom']) : null;
-$dispo = isset($_GET['dispo']) ? true : false;
-
-$objets = getObjetsFiltre($categorie, $nom, $dispo);
+$emprunts = getMesEmprunts($_SESSION['id_membre']);
+$stats = getEmpruntStats($_SESSION['id_membre']);
 
 myheader();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold">Liste des Objets</h2>
+    <h2>Mes Emprunts</h2>
     <div>
-        <a href="../pages/ajouter_objet.php" class="btn btn-outline-success btn-sm">Ajouter un objet</a>
-        <a href="mes_emprunts.php" class="btn btn-outline-primary btn-sm">Mes emprunts</a>
-        <a href="../logout.php" class="btn btn-outline-danger btn-sm">Déconnexion</a>
+        <span class="me-3">Bonjour, <strong><?= getNomMembre($_SESSION['id_membre']) ?></strong></span>
+        <a href="objets.php" class="btn btn-primary btn-sm">Retour aux objets</a>
+        <a href="../logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
 </div>
 
-<?php if ($message): ?>
-    <div class="alert alert-success"><?= ($message) ?></div>
-<?php endif; ?>
-
-<?php if ($error): ?>
-    <div class="alert alert-danger"><?= ($error) ?></div>
-<?php endif; ?>
-
-<div class="card shadow-sm mb-4 border-0">
-    <div class="card-header bg-dark text-white">
-        <h5 class="mb-0">Filtrer les objets</h5>
-    </div>
-    <div class="card-body bg-light">
-        <form method="get">
-            <div class="row g-2">
-                <div class="col-md-4">
-                    <label class="form-label">Catégorie</label>
-                    <select name="cat" class="form-select">
-                        <option value="">-- Toutes les catégories --</option>
-                        <?php
-                        $categories->data_seek(0);
-                        while ($row = $categories->fetch_assoc()) { ?>
-                            <option value="<?= $row['id_categorie'] ?>" <?= $categorie == $row['id_categorie'] ? 'selected' : '' ?>>
-                                <?= sanitizeInput($row['nom_categorie']) ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Nom de l'objet</label>
-                    <input type="text" name="nom" class="form-control" value="<?= ($nom) ?>">
-                </div>
-
-                <div class="col-md-2 d-flex align-items-end">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="dispo" <?= $dispo ? 'checked' : '' ?>>
-                        <label class="form-check-label">Disponible uniquement</label>
-                    </div>
-                </div>
-
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
-                </div>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Total emprunts</h5>
+                <p class="card-text display-6 text-primary">
+                    <?= $stats['total_emprunts'] ?>
+                </p>
             </div>
-        </form>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <h5 class="card-title text-warning">En cours</h5>
+                <p class="card-text display-6 text-warning">
+                    <?= $stats['emprunts_en_cours'] ?>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <h5 class="card-title text-success">Retournés (OK)</h5>
+                <p class="card-text display-6 text-success">
+                    <?= $stats['emprunts_retournes_ok'] ?>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-danger">
+            <div class="card-body">
+                <h5 class="card-title text-danger">Retournés (Abîmés)</h5>
+                <p class="card-text display-6 text-danger">
+                    <?= $stats['emprunts_retournes_abime'] ?>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-dark text-white">
-        <h5 class="mb-0">Objets disponibles</h5>
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Historique des emprunts en cours</h5>
     </div>
-    <div class="card-body bg-light">
-        <?php if ($objets->num_rows == 0): ?>
+    <div class="card-body">
+        <?php if ($emprunts->num_rows == 0): ?>
             <div class="alert alert-info">
-                Aucun objet trouvé.
+                <h4>Aucun emprunt trouvé</h4>
+                <p>Vous n'avez aucun emprunt en cours pour le moment.</p>
+                <a href="objets.php" class="btn btn-primary">Découvrir les objets disponibles</a>
             </div>
         <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Image</th>
                             <th>Objet</th>
                             <th>Catégorie</th>
-                            <th>Statut</th>
+                            <th>Date d'emprunt</th>
+                            <th>Date retour prévue</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($obj = $objets->fetch_assoc()) { ?>
+                        <?php while ($emprunt = $emprunts->fetch_assoc()) { ?>
                             <tr>
+                                <td><?= sanitizeInput($emprunt['nom_objet']) ?></td>
+                                <td><?= sanitizeInput($emprunt['nom_categorie']) ?></td>
+                                <td><?= formatDate($emprunt['date_emprunt']) ?></td>
                                 <td>
-                                    <img src="<?= getImagePrincipale($obj['id_objet']) ?>" width="80" alt="Image">
+                                    <?php
+                                    $date_prevue = $emprunt['date_retour_prevue'];
+                                    $classe = isDatePassed($date_prevue) ? 'text-danger fw-bold' : '';
+                                    ?>
+                                    <span class="<?= $classe ?>">
+                                        <?= formatDate($date_prevue) ?>
+                                    </span>
                                 </td>
-                                <td class="fw-bold"><?= sanitizeInput($obj['nom_objet']) ?></td>
-                                <td><?= sanitizeInput($obj['nom_categorie']) ?></td>
                                 <td>
-                                    <?php if ($obj['statut_emprunt'] === 'Emprunt en cours'): ?>
-                                        <span class="badge bg-warning text-dark">Emprunté</span>
-                                    <?php else: ?>
-                                        <span class="badge bg-success">Disponible</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($obj['statut_emprunt'] !== 'Emprunt en cours'): ?>
-                                        <form method="post" style="display:inline;">
-                                            <input type="hidden" name="id_objet" value="<?= $obj['id_objet'] ?>">
-                                            <button type="submit" name="emprunter" class="btn btn-primary btn-sm"
-                                                onclick="return confirm('Voulez-vous emprunter cet objet ?')">
-                                                Emprunter
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <span class="text-muted">Indisponible</span>
-                                    <?php endif; ?>
+                                    <form method="post" style="display:inline;">
+                                        <input type="hidden" name="id_emprunt" value="<?= $emprunt['id_emprunt'] ?>">
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="etat_retour" id="etat_ok_<?= $emprunt['id_emprunt'] ?>" value="ok" required>
+                                            <label class="form-check-label" for="etat_ok_<?= $emprunt['id_emprunt'] ?>">OK</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="etat_retour" id="etat_abime_<?= $emprunt['id_emprunt'] ?>" value="abime">
+                                            <label class="form-check-label" for="etat_abime_<?= $emprunt['id_emprunt'] ?>">Abîmé</label>
+                                        </div>
+
+                                        <button type="submit" name="retourner" class="btn btn-success btn-sm"
+                                            onclick="return confirm('Confirmer le retour de cet objet ?')">
+                                            Retourner
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -142,4 +142,6 @@ myheader();
     </div>
 </div>
 
-<?php myfooter(); ?>
+<?php
+myfooter();
+?>

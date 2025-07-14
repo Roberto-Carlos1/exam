@@ -1,5 +1,10 @@
 <?php
-require("connection.php");
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once("connection.php");
 
 function myheader()
 {
@@ -137,10 +142,9 @@ function emprunterObjet($id_objet, $id_membre)
     }
 
     $date_emprunt = date('Y-m-d');
-    $date_retour_prevue = date('Y-m-d', strtotime('+30 days'));
 
-    $stmt = $conn->prepare("INSERT INTO emprunt (id_objet, id_membre, date_emprunt, date_retour_prevue) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiss", $id_objet, $id_membre, $date_emprunt, $date_retour_prevue);
+    $stmt = $conn->prepare("INSERT INTO emprunt (id_objet, id_membre, date_emprunt) VALUES (?, ?, ?)");
+    $stmt->bind_param("iis", $id_objet, $id_membre, $date_emprunt);
 
     return $stmt->execute();
 }
@@ -148,7 +152,8 @@ function emprunterObjet($id_objet, $id_membre)
 function getMesEmprunts($id_membre)
 {
     $conn = dbConnect();
-    $sql = "SELECT e.*, o.nom_objet, c.nom_categorie
+    $sql = "SELECT e.*, o.nom_objet, c.nom_categorie,
+                   DATE_ADD(e.date_emprunt, INTERVAL 30 DAY) as date_retour_prevue
             FROM emprunt e
             JOIN objet o ON e.id_objet = o.id_objet
             JOIN categorie_objet c ON o.id_categorie = c.id_categorie
@@ -278,7 +283,7 @@ function getEmpruntStats($id_membre)
                 COUNT(*) as total_emprunts,
                 SUM(CASE WHEN date_retour IS NULL THEN 1 ELSE 0 END) as emprunts_en_cours,
                 SUM(CASE WHEN date_retour IS NOT NULL THEN 1 ELSE 0 END) as emprunts_retournes,
-                SUM(CASE WHEN date_retour IS NULL AND date_retour_prevue < CURDATE() THEN 1 ELSE 0 END) as emprunts_en_retard
+                SUM(CASE WHEN date_retour IS NULL AND DATE_ADD(date_emprunt, INTERVAL 30 DAY) < CURDATE() THEN 1 ELSE 0 END) as emprunts_en_retard
             FROM emprunt 
             WHERE id_membre = ?";
 
@@ -289,3 +294,4 @@ function getEmpruntStats($id_membre)
 
     return $result->fetch_assoc();
 }
+?>

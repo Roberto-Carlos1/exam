@@ -9,7 +9,7 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['retourner'])) {
     $id_emprunt = intval($_POST['id_emprunt']);
-    
+
     if (retournerObjet($id_emprunt, $_SESSION['id_membre'])) {
         $message = "Objet retourné avec succès !";
     } else {
@@ -28,7 +28,7 @@ myheader();
     <div>
         <span class="me-3">Bonjour, <strong><?= getNomMembre($_SESSION['id_membre']) ?></strong></span>
         <a href="objets.php" class="btn btn-primary btn-sm">Retour aux objets</a>
-        <a href="logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
+        <a href="../logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
 </div>
 
@@ -107,7 +107,7 @@ myheader();
                                 <td><?= sanitizeInput($emprunt['nom_categorie']) ?></td>
                                 <td><?= formatDate($emprunt['date_emprunt']) ?></td>
                                 <td>
-                                    <?php 
+                                    <?php
                                     $date_prevue = $emprunt['date_retour_prevue'];
                                     $classe = (!$emprunt['date_retour'] && isDatePassed($date_prevue)) ? 'text-danger fw-bold' : '';
                                     ?>
@@ -116,8 +116,8 @@ myheader();
                                     </span>
                                 </td>
                                 <td>
-                                    <?= $emprunt['date_retour'] ? 
-                                        formatDate($emprunt['date_retour']) : 
+                                    <?= $emprunt['date_retour'] ?
+                                        formatDate($emprunt['date_retour']) :
                                         '<span class="text-muted">-</span>' ?>
                                 </td>
                                 <td>
@@ -134,7 +134,7 @@ myheader();
                                         <form method="post" style="display:inline;">
                                             <input type="hidden" name="id_emprunt" value="<?= $emprunt['id_emprunt'] ?>">
                                             <button type="submit" name="retourner" class="btn btn-success btn-sm"
-                                                    onclick="return confirm('Confirmer le retour de cet objet ?')">
+                                                onclick="return confirm('Confirmer le retour de cet objet ?')">
                                                 Retourner
                                             </button>
                                         </form>

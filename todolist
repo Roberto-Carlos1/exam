@@ -1,0 +1,22 @@
+création du projets dans le git <ok>
+    repository 
+    brach
+    etc...
+    
+création des pages 
+
+    inscription.php <ok>
+      fonction :  register
+
+    login.php <ok>
+        fonction : login
+
+    mes_emprunts.php 
+       fonction : getMesEmprunts
+    
+       objets.php
+
+    connection.php <ok>
+    fonction : db_connect
+
+bootsrap <ok>

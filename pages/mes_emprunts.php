@@ -34,14 +34,6 @@ myheader();
     </div>
 </div>
 
-<?php if ($message): ?>
-    <?php displayMessage($message, 'success'); ?>
-<?php endif; ?>
-
-<?php if ($error): ?>
-    <?php displayMessage($error, 'error'); ?>
-<?php endif; ?>
-
 <!-- Statistiques -->
 <div class="row mb-4">
     <div class="col-md-3">

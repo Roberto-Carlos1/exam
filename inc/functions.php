@@ -218,28 +218,6 @@ function sanitizeInput($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-function displayMessage($message, $type = 'info') {
-    $class = '';
-    switch ($type) {
-        case 'success':
-            $class = 'alert-success';
-            break;
-        case 'error':
-            $class = 'alert-danger';
-            break;
-        case 'warning':
-            $class = 'alert-warning';
-            break;
-        default:
-            $class = 'alert-info';
-    }
-    
-    echo '<div class="alert ' . $class . ' alert-dismissible fade show" role="alert">';
-    echo sanitizeInput($message);
-    echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
-    echo '</div>';
-}
-
 function formatDate($date) {
     return date('d/m/Y', strtotime($date));
 }

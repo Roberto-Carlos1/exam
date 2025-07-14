@@ -125,31 +125,48 @@ function login($email, $mdp)
     return false;
 }
 
-function getObjets($categorie = null)
+function getObjetsFiltre($categorie = null, $nom = null, $dispo = false)
 {
     $conn = dbConnect();
     $sql = "SELECT o.*, c.nom_categorie,
-                   CASE 
-                       WHEN e.id_emprunt IS NOT NULL AND e.date_retour IS NULL 
-                       THEN 'Emprunt en cours'
-                       ELSE 'Disponible'
-                   END as statut_emprunt
+                CASE 
+                    WHEN e.id_emprunt IS NOT NULL AND e.date_retour IS NULL THEN 'Emprunt en cours'
+                    ELSE 'Disponible'
+                END as statut_emprunt
             FROM objet o
             JOIN categorie_objet c ON o.id_categorie = c.id_categorie
-            LEFT JOIN emprunt e ON o.id_objet = e.id_objet 
-               AND e.date_retour IS NULL
-            ";
+            LEFT JOIN emprunt e ON o.id_objet = e.id_objet AND e.date_retour IS NULL
+            WHERE 1=1";
+
+    $params = [];
+    $types = '';
 
     if ($categorie) {
-        $sql .= " WHERE o.id_categorie = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $categorie);
-        $stmt->execute();
-        return $stmt->get_result();
-    } else {
-        return $conn->query($sql);
+        $sql .= " AND o.id_categorie = ?";
+        $types .= "i";
+        $params[] = $categorie;
     }
+
+    if ($nom) {
+        $sql .= " AND o.nom_objet LIKE ?";
+        $types .= "s";
+        $params[] = "%$nom%";
+    }
+
+    if ($dispo) {
+        $sql .= " AND (e.id_emprunt IS NULL OR e.date_retour IS NOT NULL)";
+    }
+
+    $stmt = $conn->prepare($sql);
+
+    if ($params) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    return $stmt->get_result();
 }
+
 
 function getCategories()
 {
@@ -323,4 +340,72 @@ function getEmpruntStats($id_membre)
 
     return $result->fetch_assoc();
 }
-?>
+
+function enregistrerImage($id_objet, $nom_fichier, $is_principale = 0)
+{
+    $conn = dbConnect();
+    $stmt = $conn->prepare("INSERT INTO image_objet (id_objet, nom_fichier, principale) VALUES (?, ?, ?)");
+    $stmt->bind_param("isi", $id_objet, $nom_fichier, $is_principale);
+    $stmt->execute();
+}
+
+function getImagePrincipale($id_objet)
+{
+    $conn = dbConnect();
+    $stmt = $conn->prepare("SELECT nom_fichier FROM image_objet WHERE id_objet = ? AND principale = 1 LIMIT 1");
+    $stmt->bind_param("i", $id_objet);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        return "../uploads/".$row['nom_fichier'];
+    }
+    return "../assets/default.png"; 
+}
+
+function supprimerImage($id_image, $id_objet)
+{
+    $conn = dbConnect();
+    $stmt = $conn->prepare("SELECT nom_fichier FROM image_objet WHERE id_image = ? AND id_objet = ?");
+    $stmt->bind_param("ii", $id_image, $id_objet);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $fichier = "../uploads/".$row['nom_fichier'];
+        if (file_exists($fichier)) {
+            unlink($fichier);
+        }
+        $stmt = $conn->prepare("DELETE FROM image_objet WHERE id_image = ?");
+        $stmt->bind_param("i", $id_image);
+        $stmt->execute();
+    }
+}
+function categorieExiste($id_categorie) {
+    $conn = dbConnect();
+    $stmt = $conn->prepare("SELECT id_categorie FROM categorie_objet WHERE id_categorie = ?");
+    $stmt->bind_param("i", $id_categorie);
+    $stmt->execute();
+    $stmt->store_result();
+    return $stmt->num_rows > 0;
+}
+
+function ajouterObjet($nom_objet, $id_categorie, $description, $id_membre) {
+    $conn = dbConnect();
+
+    // Vérifier que la catégorie existe
+    if (!categorieExiste($id_categorie)) {
+        return ['success' => false, 'message' => "La catégorie sélectionnée n'existe pas."];
+    }
+
+    $stmt = $conn->prepare("INSERT INTO objet (nom_objet, id_categorie, description, id_membre) VALUES (?, ?, ?, ?)");
+    if (!$stmt) {
+        return ['success' => false, 'message' => "Erreur SQL: " . $conn->error];
+    }
+
+    $stmt->bind_param("sisi", $nom_objet, $id_categorie, $description, $id_membre);
+
+    if ($stmt->execute()) {
+        return ['success' => true, 'message' => "Objet ajouté avec succès."];
+    } else {
+        return ['success' => false, 'message' => "Erreur lors de l'ajout de l'objet: " . $stmt->error];
+    }
+}

@@ -10,60 +10,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['emprunter'])) {
     $id_membre = $_SESSION['id_membre'];
 
     if (emprunterObjet($id_objet, $id_membre)) {
-        $message = " Objet emprunté avec succès !";
+        $message = "Objet emprunté avec succès !";
     } else {
-        $error = " Erreur lors de l'emprunt. L'objet n'est peut-être plus disponible.";
+        $error = "Erreur lors de l'emprunt. L'objet n'est peut-être plus disponible.";
     }
 }
 
 $categories = getCategories();
 $categorie = isset($_GET['cat']) ? intval($_GET['cat']) : null;
-$objets = getObjets($categorie);
+$nom = isset($_GET['nom']) ? trim($_GET['nom']) : null;
+$dispo = isset($_GET['dispo']) ? true : false;
+
+$objets = getObjetsFiltre($categorie, $nom, $dispo);
 
 myheader();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold"> Liste des Objets</h2>
+    <h2 class="fw-bold">Liste des Objets</h2>
     <div>
+        <a href="../pages/ajouter_objet.php" class="btn btn-outline-success btn-sm">Ajouter un objet</a>
         <a href="mes_emprunts.php" class="btn btn-outline-primary btn-sm">Mes emprunts</a>
         <a href="../logout.php" class="btn btn-outline-danger btn-sm">Déconnexion</a>
     </div>
 </div>
 
 <?php if ($message): ?>
-    <div class="alert alert-success"><?= htmlspecialchars($message) ?></div>
+    <div class="alert alert-success"><?= ($message) ?></div>
 <?php endif; ?>
 
 <?php if ($error): ?>
-    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+    <div class="alert alert-danger"><?= ($error) ?></div>
 <?php endif; ?>
 
 <div class="card shadow-sm mb-4 border-0">
     <div class="card-header bg-dark text-white">
-        <h5 class="mb-0"> Filtrer par catégorie</h5>
+        <h5 class="mb-0">Filtrer les objets</h5>
     </div>
     <div class="card-body bg-light">
         <form method="get">
             <div class="row g-2">
-                <div class="col-md-8">
-                    <select name="cat" class="form-select" onchange="this.form.submit()">
+                <div class="col-md-4">
+                    <label class="form-label">Catégorie</label>
+                    <select name="cat" class="form-select">
                         <option value="">-- Toutes les catégories --</option>
                         <?php
                         $categories->data_seek(0);
-                        while ($row = $categories->fetch_assoc()) {
-                        ?>
-                            <option value="<?= $row['id_categorie'] ?>"
-                                <?= $categorie == $row['id_categorie'] ? 'selected' : '' ?>>
+                        while ($row = $categories->fetch_assoc()) { ?>
+                            <option value="<?= $row['id_categorie'] ?>" <?= $categorie == $row['id_categorie'] ? 'selected' : '' ?>>
                                 <?= sanitizeInput($row['nom_categorie']) ?>
                             </option>
                         <?php } ?>
                     </select>
                 </div>
+
                 <div class="col-md-4">
-                    <?php if ($categorie): ?>
-                        <a href="objets.php" class="btn btn-secondary w-100">Réinitialiser le filtre</a>
-                    <?php endif; ?>
+                    <label class="form-label">Nom de l'objet</label>
+                    <input type="text" name="nom" class="form-control" value="<?= ($nom) ?>">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dispo" <?= $dispo ? 'checked' : '' ?>>
+                        <label class="form-check-label">Disponible uniquement</label>
+                    </div>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
                 </div>
             </div>
         </form>
@@ -72,18 +86,19 @@ myheader();
 
 <div class="card shadow-sm border-0">
     <div class="card-header bg-dark text-white">
-        <h5 class="mb-0"> Objets disponibles</h5>
+        <h5 class="mb-0">Objets disponibles</h5>
     </div>
     <div class="card-body bg-light">
         <?php if ($objets->num_rows == 0): ?>
             <div class="alert alert-info">
-                Aucun objet trouvé dans cette catégorie.
+                Aucun objet trouvé.
             </div>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
+                            <th>Image</th>
                             <th>Objet</th>
                             <th>Catégorie</th>
                             <th>Statut</th>
@@ -93,6 +108,9 @@ myheader();
                     <tbody>
                         <?php while ($obj = $objets->fetch_assoc()) { ?>
                             <tr>
+                                <td>
+                                    <img src="<?= getImagePrincipale($obj['id_objet']) ?>" width="80" alt="Image">
+                                </td>
                                 <td class="fw-bold"><?= sanitizeInput($obj['nom_objet']) ?></td>
                                 <td><?= sanitizeInput($obj['nom_categorie']) ?></td>
                                 <td>
@@ -124,6 +142,4 @@ myheader();
     </div>
 </div>
 
-<?php
-myfooter();
-?>
+<?php myfooter(); ?>

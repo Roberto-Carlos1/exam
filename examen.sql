@@ -45,6 +45,17 @@ CREATE TABLE emprunt (
     FOREIGN KEY (id_membre) REFERENCES membre(id_membre)
 );
 
+CREATE TABLE image_objet (
+    id_image INT AUTO_INCREMENT PRIMARY KEY,
+    id_objet INT NOT NULL,
+    nom_fichier VARCHAR(255) NOT NULL,
+    principale TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (id_objet) REFERENCES objet(id_objet) ON DELETE CASCADE
+);
+
+ALTER TABLE objet ADD description TEXT AFTER id_categorie;
+
+
 INSERT INTO membre (nom, date_naissance, genre, email, ville, mdp, image_profil) VALUES
 ('Alice Dupont', '1995-04-12', 'F', 'alice@example.com', 'Paris', 'mdp123', 'alice.jpg'),
 ('Bob Martin', '1990-08-22', 'H', 'bob@example.com', 'Lyon', 'mdp456', 'bob.jpg'),

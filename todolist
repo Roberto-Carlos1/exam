@@ -1,22 +1,39 @@
-création du projets dans le git <ok>
-    repository 
-    brach
-    etc...
-    
-création des pages 
+Projet Gestion d’Emprunts — Checklist 
 
-    inscription.php <ok>
-      fonction :  register
+1. Gestion du projet Git <Roberto>
+    -Création du repository Git <ok>
+    -Création des branches principales
+    -Ajout .gitignore
+    -Configuration README.md <Fiantso>
+    -Mise en place LICENSE
+    -Configuration dépôt distant
+    -Premier commit initial <ok>
 
-    login.php <ok>
-        fonction : login
+2. Base de données <Fiantso / Roberto>
+    -Script SQL création tables <Fiantso> <ok>
+    -Fonction db_connect() dans connection.php <Roberto> <ok>
 
-    mes_emprunts.php 
-       fonction : getMesEmprunts
-    
-       objets.php
+3. Pages PHP principales
+    -inscription.php : register() <Fiantso> <ok>
+    -login.php : login() <Fiantso> <ok>
+    -objets.php : getObjets(), getCategories() <Roberto> <ok>
+    -mes_emprunts.php : getMesEmprunts(), getEmpruntStats() <Roberto> <ok>
+    -mes_emprunts_traitement.php : retournerObjet() <Roberto> <ok>
 
-    connection.php <ok>
-    fonction : db_connect
+4. Fichiers d’inclusion et fonctions
+    -functions.php (sanitizeInput, redirectIfNotLoggedIn, formatDate…) <Fiantso> <ok>
+    -connection.php (db_connect) <Roberto> <ok>
+    -header.php & footer.php ou myheader()/myfooter() <Fiantso> <ok>
 
-bootsrap <ok>
+6. Front-end / Design
+    -Bootstrap intégré <Fiantso> <ok>
+    -Formulaires responsives (inscription, login, emprunt, retour) <Fiantso> <ok>
+    -Affichage alertes/messages (succès, erreur) <Fiantso> <ok>
+    -Tables responsives (objets, emprunts) <Roberto> <ok>
+    -Boutons action avec confirmation JS <Roberto> <ok>
+
+7. Tests et validation
+    -Tests unitaires fonctions critiques <Roberto> <ok>
+    -Tests fonctionnels (inscription, login, emprunt, retour) <Fiantso> <ok>
+    -Gestion erreurs SQL <Roberto> <ok>
+    -Validation formulaires client/serveur <Fiantso> <ok>

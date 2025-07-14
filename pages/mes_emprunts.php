@@ -2,13 +2,11 @@
 session_start();
 require('../inc/functions.php');
 
-// Vérifier si l'utilisateur est connecté
 redirectIfNotLoggedIn();
 
 $message = '';
 $error = '';
 
-// Traitement du retour d'objet
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['retourner'])) {
     $id_emprunt = intval($_POST['id_emprunt']);
     
@@ -34,7 +32,6 @@ myheader();
     </div>
 </div>
 
-<!-- Statistiques -->
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card text-center border-primary">

@@ -45,23 +45,20 @@ CREATE TABLE emprunt (
     FOREIGN KEY (id_membre) REFERENCES membre(id_membre)
 );
 
--- 3️⃣ Insérer 4 membres
 INSERT INTO membre (nom, date_naissance, genre, email, ville, mdp, image_profil) VALUES
 ('Alice Dupont', '1995-04-12', 'F', 'alice@example.com', 'Paris', 'mdp123', 'alice.jpg'),
 ('Bob Martin', '1990-08-22', 'H', 'bob@example.com', 'Lyon', 'mdp456', 'bob.jpg'),
 ('Claire Durand', '1988-11-05', 'F', 'claire@example.com', 'Marseille', 'mdp789', 'claire.jpg'),
 ('David Petit', '1992-02-17', 'H', 'david@example.com', 'Toulouse', 'mdpabc', 'david.jpg');
 
--- 4️⃣ Insérer 4 catégories
 INSERT INTO categorie_objet (nom_categorie) VALUES
 ('Esthétique'),
 ('Bricolage'),
 ('Mécanique'),
 ('Cuisine');
 
--- 5️⃣ Insérer 10 objets par membre (total 40 objets)
 INSERT INTO objet (nom_objet, id_categorie, id_membre) VALUES
--- Objets pour Alice (id_membre 1)
+
 ('Sèche-cheveux', 1, 1),
 ('Lisseur', 1, 1),
 ('Peinture murale', 2, 1),
@@ -72,7 +69,7 @@ INSERT INTO objet (nom_objet, id_categorie, id_membre) VALUES
 ('Mixeur', 4, 1),
 ('Grille-pain', 4, 1),
 ('Robot de cuisine', 4, 1),
--- Objets pour Bob (id_membre 2)
+
 ('Tondeuse', 1, 2),
 ('Ponceuse', 2, 2),
 ('Scie sauteuse', 2, 2),
@@ -83,7 +80,7 @@ INSERT INTO objet (nom_objet, id_categorie, id_membre) VALUES
 ('Machine à café', 4, 2),
 ('Moulin à café', 4, 2),
 ('Blender', 4, 2),
--- Objets pour Claire (id_membre 3)
+
 ('Lime à ongles', 1, 3),
 ('Fer à friser', 1, 3),
 ('Pinceau peinture', 2, 3),
@@ -94,7 +91,7 @@ INSERT INTO objet (nom_objet, id_categorie, id_membre) VALUES
 ('Four', 4, 3),
 ('Micro-ondes', 4, 3),
 ('Cafetière', 4, 3),
--- Objets pour David (id_membre 4)
+
 ('Rasoir', 1, 4),
 ('Tondeuse barbe', 1, 4),
 ('Pistolet à colle', 2, 4),
@@ -106,9 +103,8 @@ INSERT INTO objet (nom_objet, id_categorie, id_membre) VALUES
 ('Friteuse', 4, 4),
 ('Gaufrier', 4, 4);
 
--- 6️⃣ Insérer des images pour TOUS les objets (au moins 1-2 images par objet)
 INSERT INTO images_objet (id_objet, nom_image) VALUES
--- Images pour les objets d'Alice (1-10)
+
 (1, 'seche_cheveux1.jpg'),
 (1, 'seche_cheveux2.jpg'),
 (2, 'lisseur1.jpg'),
@@ -129,7 +125,6 @@ INSERT INTO images_objet (id_objet, nom_image) VALUES
 (10, 'robot_cuisine2.jpg'),
 (10, 'robot_cuisine3.jpg'),
 
--- Images pour les objets de Bob (11-20)
 (11, 'tondeuse1.jpg'),
 (11, 'tondeuse2.jpg'),
 (12, 'ponceuse1.jpg'),
@@ -148,7 +143,6 @@ INSERT INTO images_objet (id_objet, nom_image) VALUES
 (20, 'blender1.jpg'),
 (20, 'blender2.jpg'),
 
--- Images pour les objets de Claire (21-30)
 (21, 'lime_ongles1.jpg'),
 (22, 'fer_friser1.jpg'),
 (22, 'fer_friser2.jpg'),
@@ -167,7 +161,6 @@ INSERT INTO images_objet (id_objet, nom_image) VALUES
 (30, 'cafetiere1.jpg'),
 (30, 'cafetiere2.jpg'),
 
--- Images pour les objets de David (31-40)
 (31, 'rasoir1.jpg'),
 (32, 'tondeuse_barbe1.jpg'),
 (32, 'tondeuse_barbe2.jpg'),
@@ -186,9 +179,8 @@ INSERT INTO images_objet (id_objet, nom_image) VALUES
 (39, 'friteuse2.jpg'),
 (40, 'gaufrier1.jpg');
 
--- 7️⃣ Insérer des emprunts (25 emprunts pour un historique complet)
 INSERT INTO emprunt (id_objet, id_membre, date_emprunt, date_retour) VALUES
--- Emprunts terminés
+
 (1, 2, '2025-07-01', '2025-07-10'),
 (2, 3, '2025-07-02', '2025-07-11'),
 (5, 4, '2025-07-03', '2025-07-12'),
@@ -200,14 +192,12 @@ INSERT INTO emprunt (id_objet, id_membre, date_emprunt, date_retour) VALUES
 (31, 3, '2025-07-09', '2025-07-18'),
 (35, 4, '2025-07-10', '2025-07-19'),
 
--- Emprunts en cours (sans date de retour)
 (8, 2, '2025-07-12', NULL),
 (14, 1, '2025-07-13', NULL),
 (22, 4, '2025-07-14', NULL),
 (28, 1, '2025-07-15', NULL),
 (36, 3, '2025-07-16', NULL),
 
--- Emprunts supplémentaires terminés
 (3, 2, '2025-06-20', '2025-06-25'),
 (7, 3, '2025-06-22', '2025-06-30'),
 (11, 4, '2025-06-25', '2025-07-05'),
@@ -219,12 +209,8 @@ INSERT INTO emprunt (id_objet, id_membre, date_emprunt, date_retour) VALUES
 (37, 2, '2025-07-08', '2025-07-17'),
 (40, 3, '2025-07-11', '2025-07-20');
 
--- 8️⃣ Requêtes utiles pour vérifier les données
-
--- Afficher tous les membres
 SELECT * FROM membre;
 
--- Afficher tous les objets avec leur catégorie et propriétaire
 SELECT 
     o.nom_objet,
     c.nom_categorie,
@@ -235,7 +221,6 @@ JOIN categorie_objet c ON o.id_categorie = c.id_categorie
 JOIN membre m ON o.id_membre = m.id_membre
 ORDER BY m.nom, c.nom_categorie;
 
--- Afficher les emprunts en cours
 SELECT 
     e.id_emprunt,
     o.nom_objet,
@@ -249,7 +234,6 @@ JOIN membre emprunteur ON e.id_membre = emprunteur.id_membre
 WHERE e.date_retour IS NULL
 ORDER BY e.date_emprunt;
 
--- Compter les objets par catégorie
 SELECT 
     c.nom_categorie,
     COUNT(o.id_objet) as nombre_objets
@@ -258,7 +242,6 @@ LEFT JOIN objet o ON c.id_categorie = o.id_categorie
 GROUP BY c.id_categorie, c.nom_categorie
 ORDER BY nombre_objets DESC;
 
--- Afficher les objets avec leurs images
 SELECT 
     o.nom_objet,
     m.nom as proprietaire,
@@ -269,7 +252,6 @@ LEFT JOIN images_objet i ON o.id_objet = i.id_objet
 GROUP BY o.id_objet, o.nom_objet, m.nom
 ORDER BY o.nom_objet;
 
--- Statistiques des emprunts par membre
 SELECT 
     m.nom,
     COUNT(e.id_emprunt) as total_emprunts,

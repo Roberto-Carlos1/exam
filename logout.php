@@ -1,6 +1,6 @@
 <?php
 session_start();
-require('inc/functions.php');
-
-logout();
+session_destroy();
+header('Location: pages/inscription.php');
+exit();
 ?>

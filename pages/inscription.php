@@ -1,5 +1,4 @@
 <?php
-
 require_once('../inc/functions.php'); 
 require_once('../pages/traitement_incription.php'); 
 
@@ -8,20 +7,20 @@ myheader();
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center mb-0">Inscription</h2>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <h2 class="text-center mb-0">Créer un compte</h2>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light">
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger">
-                        <?= ($error) ?>
+                        <?= htmlspecialchars($error) ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($success)): ?>
                     <div class="alert alert-success">
-                        <?= ($success) ?>
+                        <?= htmlspecialchars($success) ?>
                     </div>
                 <?php endif; ?>
 
@@ -29,13 +28,13 @@ myheader();
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom complet *</label>
                         <input type="text" class="form-control" id="nom" name="nom" 
-                               value="<?= ($nom) ?>" required>
+                               value="<?= htmlspecialchars($nom) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="date_naissance" class="form-label">Date de naissance *</label>
                         <input type="date" class="form-control" id="date_naissance" name="date_naissance" 
-                               value="<?= ($date_naissance) ?>" required>
+                               value="<?= htmlspecialchars($date_naissance) ?>" required>
                     </div>
 
                     <div class="mb-3">
@@ -50,13 +49,13 @@ myheader();
                     <div class="mb-3">
                         <label for="email" class="form-label">Email *</label>
                         <input type="email" class="form-control" id="email" name="email" 
-                               value="<?= ($email) ?>" required>
+                               value="<?= htmlspecialchars($email) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="ville" class="form-label">Ville *</label>
                         <input type="text" class="form-control" id="ville" name="ville" 
-                               value="<?= ($ville) ?>" required>
+                               value="<?= htmlspecialchars($ville) ?>" required>
                     </div>
 
                     <div class="mb-3">
@@ -67,7 +66,7 @@ myheader();
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">S'inscrire</button>
+                        <button type="submit" class="btn btn-dark">S'inscrire</button>
                     </div>
                 </form>
 

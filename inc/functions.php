@@ -13,19 +13,47 @@ function myheader()
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>site</title>
+    <title>Emprunts d'Objets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        header {
+            background: linear-gradient(135deg, #212529, #343a40);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        nav a {
+            font-weight: 500;
+            color: #ffffff;
+            margin-left: 1rem;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+        nav a:hover {
+            color: #ffc107;
+            text-decoration: underline;
+        }
+        footer {
+            background: #212529;
+        }
+    </style>
 </head>
-<body>
-    <header class="bg-dark text-white text-center py-4 mb-4">
-        <h1>Emprunts D'Objets</h1>
-        <nav class="nav justify-content-center">
-            <a class="nav-link text-white" href="../pages/inscription.php">Accueil</a>
-            <a class="nav-link text-white" href="../pages/objets.php">Objets</a>
-        </nav>
+<body class="d-flex flex-column min-vh-100">
+    <header class="text-white py-3">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <h1 class="mb-0"> Emprunts d'Objets</h1>
+            <nav class="nav">
+                <a class="nav-link" href="../pages/inscription.php">Inscription</a>
+                <a class="nav-link" href="../pages/login.php">Connexion</a>
+            </nav>
+        </div>
     </header>
-    <main class="container mb-5">
+    <main class="container my-5 flex-grow-1">
 HTML;
 }
 
@@ -33,14 +61,15 @@ function myfooter()
 {
     echo <<<HTML
     </main>
-    <footer class="bg-dark text-white text-center py-3 fixed-bottom">
-        &copy; 2025 - Copyright Emprunts d'objets
+    <footer class="text-white text-center py-4 mt-auto">
+        &copy; 2025 Emprunts d'Objets. Tous droits réservés.
     </footer>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 HTML;
 }
+
 
 function register($nom, $date_naissance, $genre, $email, $ville, $mdp)
 {

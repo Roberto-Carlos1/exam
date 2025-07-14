@@ -1,5 +1,4 @@
 <?php
-
 require_once('../inc/functions.php'); 
 require_once('../pages/traitement_login.php'); 
 
@@ -7,12 +6,12 @@ myheader();
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
                 <h2 class="text-center mb-0">Connexion</h2>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light">
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger">
                         <?= htmlspecialchars($error) ?>
@@ -34,7 +33,7 @@ myheader();
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Se connecter</button>
+                        <button type="submit" class="btn btn-dark">Se connecter</button>
                     </div>
                 </form>
 

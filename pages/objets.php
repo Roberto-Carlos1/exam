@@ -27,9 +27,8 @@ myheader();
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Liste des Objets</h2>
     <div>
-        <span class="me-3">Bonjour, <strong><?= getNomMembre($_SESSION['id_membre']) ?></strong></span>
         <a href="mes_emprunts.php" class="btn btn-info btn-sm">Mes emprunts</a>
-        <a href="logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
+        <a href="../logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
 </div>
 

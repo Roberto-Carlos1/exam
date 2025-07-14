@@ -1,2 +1,2 @@
 <?php
-header('Location:pages/inscription.php');
+header('Location: pages/inscription.php');

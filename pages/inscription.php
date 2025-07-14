@@ -1,80 +1,7 @@
 <?php
-session_start();
-require('../inc/functions.php');
 
-// Si déjà connecté, rediriger vers objets
-if (isset($_SESSION['id_membre'])) {
-    header('Location: objets.php');
-    exit();
-}
-
-$nom = $date_naissance = $genre = $email = $ville = '';
-$error = '';
-$success = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Récupérer et nettoyer les données
-    $nom = trim($_POST['nom'] ?? '');
-    $date_naissance = $_POST['date_naissance'] ?? '';
-    $genre = $_POST['genre'] ?? '';
-    $email = trim($_POST['email'] ?? '');
-    $ville = trim($_POST['ville'] ?? '');
-    $mdp = $_POST['mdp'] ?? '';
-
-    // Validation côté serveur
-    $errors = [];
-    
-    if (empty($nom)) {
-        $errors[] = "Le nom est obligatoire";
-    }
-    
-    if (empty($date_naissance)) {
-        $errors[] = "La date de naissance est obligatoire";
-    }
-    
-    if (empty($genre)) {
-        $errors[] = "Le genre est obligatoire";
-    }
-    
-    if (empty($email)) {
-        $errors[] = "L'email est obligatoire";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "L'email n'est pas valide";
-    }
-    
-    if (empty($ville)) {
-        $errors[] = "La ville est obligatoire";
-    }
-    
-    if (empty($mdp)) {
-        $errors[] = "Le mot de passe est obligatoire";
-    } elseif (strlen($mdp) < 6) {
-        $errors[] = "Le mot de passe doit contenir au moins 6 caractères";
-    }
-
-    if (empty($errors)) {
-        // Tentative d'inscription
-        $result = register($nom, $date_naissance, $genre, $email, $ville, $mdp);
-        
-        if ($result['success']) {
-            $success = $result['message'];
-            
-            // Connexion automatique après inscription
-            $id_membre = login($email, $mdp);
-            if ($id_membre) {
-                $_SESSION['id_membre'] = $id_membre;
-                header('Location: objets.php');
-                exit();
-            } else {
-                $error = "Inscription réussie mais erreur lors de la connexion automatique. Veuillez vous connecter manuellement.";
-            }
-        } else {
-            $error = $result['message'];
-        }
-    } else {
-        $error = implode('<br>', $errors);
-    }
-}
+require_once('../inc/functions.php'); 
+require_once('../pages/traitement_incription.php'); 
 
 myheader();
 ?>
@@ -88,13 +15,13 @@ myheader();
             <div class="card-body">
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger">
-                        <?= $error ?>
+                        <?= ($error) ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($success)): ?>
                     <div class="alert alert-success">
-                        <?= htmlspecialchars($success) ?>
+                        <?= ($success) ?>
                     </div>
                 <?php endif; ?>
 
@@ -102,13 +29,13 @@ myheader();
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom complet *</label>
                         <input type="text" class="form-control" id="nom" name="nom" 
-                               value="<?= htmlspecialchars($nom) ?>" required>
+                               value="<?= ($nom) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="date_naissance" class="form-label">Date de naissance *</label>
                         <input type="date" class="form-control" id="date_naissance" name="date_naissance" 
-                               value="<?= htmlspecialchars($date_naissance) ?>" required>
+                               value="<?= ($date_naissance) ?>" required>
                     </div>
 
                     <div class="mb-3">
@@ -123,13 +50,13 @@ myheader();
                     <div class="mb-3">
                         <label for="email" class="form-label">Email *</label>
                         <input type="email" class="form-control" id="email" name="email" 
-                               value="<?= htmlspecialchars($email) ?>" required>
+                               value="<?= ($email) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="ville" class="form-label">Ville *</label>
                         <input type="text" class="form-control" id="ville" name="ville" 
-                               value="<?= htmlspecialchars($ville) ?>" required>
+                               value="<?= ($ville) ?>" required>
                     </div>
 
                     <div class="mb-3">

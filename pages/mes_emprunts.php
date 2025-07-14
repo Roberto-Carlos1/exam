@@ -28,6 +28,7 @@ myheader();
     <div>
         <span class="me-3">Bonjour, <strong><?= getNomMembre($_SESSION['id_membre']) ?></strong></span>
         <a href="objets.php" class="btn btn-primary btn-sm">Retour aux objets</a>
+        <a href="stat_objet_retourner.php" class="btn btn-primary btn-sm">VOIr stat total objet retourner</a>
         <a href="../logout.php" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
 </div>
